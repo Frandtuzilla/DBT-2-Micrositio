@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedFlow - Centro de Información</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            line-height: 1.6;
+            background: #f8fafc;
+            color: #1e293b;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-bottom: 1px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-self: start;
+        }
+
+        .logo-left img {
+            height: 60px;
+            width: auto;
+            transition: opacity 0.2s ease;
+        }
+
+        .logo-left a:hover img {
+            opacity: 0.8;
+        }
+
+        .logo-right {
+            justify-self: end;
+            height: 60px;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-right img {
+            height: 60px;
+            width: auto;
+            border-radius: 6px;
+        }
+
+        /* Banner */
+        .banner {
+            background: linear-gradient(135deg, #1e40af 0%, #059669 100%);
+            color: white;
+            padding: 4rem 2rem;
+            position: relative;
+        }
+
+        .banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.05"><circle cx="30" cy="30" r="1"/></g></svg>') repeat;
+        }
+
+        .banner-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .disease-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255,255,255,0.15);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .banner h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -1px;
+        }
+
+        .banner p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.5;
+            font-weight: 400;
+        }
+
+        /* Promotional Banner */
+        .promotional-banner {
+            background: #ffffff;
+            padding: 2rem 2rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .promotional-banner-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .promotional-banner img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .promotional-banner img:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .promotional-banner.hidden {
+            display: none;
+        }
+
+        .content-selector {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem 0;
+        }
+
+        .selector-tabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            margin-bottom: 3rem;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 0;
+        }
+
+        .tab-button {
+            padding: 12px 20px;
+            border: none;
+            background: transparent;
+            color: #64748b;
+            border-radius: 6px 6px 0 0;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-button:hover {
+            color: #2563eb;
+            background: #f8fafc;
+        }
+
+        .tab-button.active {
+            color: #2563eb;
+            background: white;
+            border-bottom-color: #2563eb;
+            font-weight: 600;
+        }
+
+        .content-count {
+            background: #f1f5f9;
+            color: #64748b;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .tab-button.active .content-count {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 2rem;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+            display: none;
+        }
+
+        .content-card.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .content-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-color: #cbd5e1;
+        }
+
+        .card-header {
+            padding: 24px;
+            background: #fafbfc;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .content-type {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .type-video {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .type-pdf {
+            background: #dcfce7;
+            color: #059669;
+        }
+
+        .type-infographic {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .type-guide {
+            background: #f3e8ff;
+            color: #7c3aed;
+        }
+
+        .type-presentation {
+            background: #fce7f3;
+            color: #db2777;
+        }
+
+        .type-material {
+            background: #f0f9ff;
+            color: #0284c7;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .card-description {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .card-footer {
+            padding: 24px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: none;
+            cursor: pointer;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #f8fafc;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #f1f5f9;
+            transform: translateY(-1px);
+        }
+
+        /* Individual Content Layout */
+        .individual-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            grid-column: 1 / -1;
+        }
+
+        .breadcrumb {
+            margin-bottom: 16px;
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .breadcrumb a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb span {
+            margin: 0 8px;
+            color: #94a3b8;
+        }
+
+        /* Individual Content Tabs */
+        .individual-tabs {
+            display: flex;
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 0;
+            background: #f8fafc;
+            border-radius: 12px 12px 0 0;
+            overflow: hidden;
+        }
+
+        .individual-tab {
+            flex: 1;
+            padding: 16px 24px;
+            border: none;
+            background: transparent;
+            color: #64748b;
+            font-weight: 500;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .individual-tab:hover {
+            color: #2563eb;
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .individual-tab.active {
+            color: #2563eb;
+            background: white;
+            font-weight: 600;
+        }
+
+        .individual-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #2563eb;
+        }
+
+        /* Individual Content Panels */
+        .individual-content-panels {
+            background: white;
+            border-radius: 0 0 12px 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .individual-panel {
+            display: none;
+            padding: 32px;
+        }
+
+        .individual-panel.active {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Preview Panel */
+        .preview-container {
+            height: 600px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-header {
+            background: linear-gradient(135deg, #1e40af, #059669);
+            color: white;
+            padding: 12px 20px;
+            font-weight: 500;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .preview-iframe {
+            flex: 1;
+            border: none;
+            width: 100%;
+            background: white;
+        }
+
+        .preview-loading {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-size: 16px;
+        }
+
+        /* Details Panel */
+        .details-section {
+            margin-bottom: 32px;
+        }
+
+        .details-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .details-section h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .details-section p {
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .details-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .details-actions .btn {
+            flex: none;
+            min-width: 140px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #64748b;
+            display: none;
+        }
+
+        .empty-state.active {
+            display: block;
+        }
+
+        .empty-state-icon {
+            width: 64px;
+            height: 64px;
+            background: #f1f5f9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: #94a3b8;
+            font-size: 24px;
+        }
+
+        .empty-state h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #374151;
+        }
+
+        /* Footer */
+        .footer {
+            background: #1e293b;
+            color: #94a3b8;
+            text-align: center;
+            padding: 3rem 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer p {
+            font-size: 14px;
+        }
+
+        /* Card Hover Effect */
+        .content-card {
+            position: relative;
+        }
+
+        .content-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #2563eb, #059669);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .content-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .header-container {
+                gap: 0.5rem;
+            }
+
+            .logo-left img {
+                height: 50px;
+            }
+
+            .logo-right img {
+                height: 50px;
+            }
+
+            .banner {
+                padding: 3rem 1rem;
+            }
+
+            .banner h1 {
+                font-size: 2.25rem;
+            }
+
+            .banner p {
+                font-size: 1.1rem;
+            }
+
+            .content-selector {
+                padding: 2rem 1rem 0;
+            }
+
+            .promotional-banner {
+                padding: 1.5rem 1rem;
+            }
+
+            .main-content {
+                padding: 0 1rem 3rem;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .selector-tabs {
+                overflow-x: auto;
+                justify-content: flex-start;
+                padding-bottom: 0.5rem;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
+
+            .selector-tabs::-webkit-scrollbar {
+                display: none;
+            }
+
+            .tab-button {
+                flex-shrink: 0;
+                padding: 10px 16px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                flex: none;
+            }
+
+            .individual-panel {
+                padding: 20px;
+            }
+
+            .individual-tabs {
+                flex-direction: column;
+            }
+
+            .individual-tab {
+                text-align: center;
+            }
+
+            .preview-container {
+                height: 400px;
+            }
+
+            .details-actions {
+                flex-direction: column;
+            }
+
+            .details-actions .btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo-left img {
+                height: 45px;
+            }
+
+            .logo-right img {
+                height: 45px;
+            }
+
+            .banner h1 {
+                font-size: 2rem;
+            }
+
+            .preview-container {
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo-left">
+                <a href="https://www.medflow.com.mx" target="_blank" rel="noopener noreferrer">
+                    <img src="images/logo-medflow.png" alt="MedFlow" />
+                </a>
+            </div>
+            <div></div>
+            <div class="logo-right">
+                <img src="images/your-logo-goes-here.gif" alt="Logo del Cliente" />
+            </div>
+        </div>
+    </header>
+
+    <!-- Banner -->
+    <section class="banner">
+        <div class="banner-container">
+            <div class="disease-badge" id="diseaseBadge">
+                <span id="diseaseName">[NOMBRE DE LA ENFERMEDAD]</span>
+            </div>
+            <h1 id="pageTitle">[TÍTULO DEL CENTRO DE INFORMACIÓN]</h1>
+            <p id="pageDescription">[DESCRIPCIÓN DE LOS RECURSOS DISPONIBLES]</p>
+        </div>
+    </section>
+
+    <!-- Promotional Banner -->
+    <section class="promotional-banner" id="promotionalBanner">
+        <div class="promotional-banner-container">
+            <img src="images/promotional-banner.gif" alt="Banner Promocional" id="promotionalBannerImage" />
+        </div>
+    </section>
+
+    <!-- Content Type Selector -->
+    <section class="content-selector">
+        <div class="selector-tabs" id="selectorTabs">
+            <!-- Las pestañas se generan dinámicamente -->
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-grid" id="contentGrid">
+            <!-- El contenido se carga dinámicamente aquí -->
+        </div>
+        <div class="empty-state" id="emptyState">
+            <div class="empty-state-icon">📄</div>
+            <h3>No hay contenido disponible</h3>
+            <p>Esta categoría aún no tiene recursos cargados.</p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 MedFlow. Centro de Información Médica - Recursos para Profesionales de la Salud.</p>
+    </footer>
+
+    <script>
+        // ============================================================
+        // INSTRUCCIONES DE USO DEL TEMPLATE
+        // ============================================================
+        /*
+        
+        GUÍA PARA PERSONALIZAR EL TEMPLATE:
+
+        0. ARCHIVOS REQUERIDOS:
+           - Crear carpeta "images/" en el mismo directorio que este HTML
+           - Guardar el logo de MedFlow como "images/logo-medflow.png"
+           - Guardar el logo del cliente como "images/your-logo-goes-here.gif"
+           - Guardar el banner promocional como "images/promotional-banner.gif"
+        
+        1. CONFIGURACIÓN BÁSICA DE LA ENFERMEDAD:
+           - Cambiar DISEASE_CONFIG.name
+           - Cambiar DISEASE_CONFIG.title 
+           - Cambiar DISEASE_CONFIG.description
+        
+        2. CONFIGURAR CATEGORÍAS DE CONTENIDO:
+           - Modificar DISEASE_CONFIG.categories
+           - Cada categoría debe tener: name, items[]
+        
+        3. AGREGAR CONTENIDO:
+           - Llenar el array 'items' de cada categoría
+           - Cada item debe tener: title, description, type, url, previewUrl, slug
+        
+        4. TIPOS DE CONTENIDO DISPONIBLES:
+           - "video" (azul)
+           - "pdf" (verde)  
+           - "infographic" (amarillo)
+           - "guide" (púrpura)
+           - "presentation" (rosa)
+           - "material" (celeste)
+
+        5. NUEVA FUNCIONALIDAD DE VISTA DIRECTA Y SIMPLIFICADA:
+           - Al hacer clic en "Ver Detalles", se va directamente al preview del contenido
+           - Vista en pantalla completa (80% altura) sin elementos redundantes
+           - Header minimalista con solo el título y botón de volver
+           - Eliminada información duplicada o innecesaria
+           - Acceso rápido y directo al contenido principal
+        
+        6. ESTRUCTURA DE UN ITEM:
+           {
+               title: "Título del recurso",
+               description: "Descripción detallada del contenido",
+               type: "video|pdf|infographic|guide|presentation|material",
+               slug: "url-amigable-sin-espacios",
+               url: "https://drive.google.com/file/d/ID/view?usp=drive_link",
+               previewUrl: "https://drive.google.com/file/d/ID/preview"
+           }
+
+        7. BANNER PROMOCIONAL:
+           - Se muestra solo en homepage y vistas de categorías
+           - Se oculta automáticamente en páginas de contenido individual
+           - Responsive y con efectos hover profesionales
+           - Path: images/promotional-banner.gif
+
+        8. FUNCIONALIDAD DE ROUTING:
+           - Cada contenido tiene su propia URL: /slug-del-contenido
+           - URLs amigables y compartibles
+           - Navegación con botones atrás/adelante del navegador
+           - Breadcrumbs para navegación fácil
+        
+        EJEMPLO DE CONFIGURACIÓN COMPLETA:
+        Ver más abajo en DISEASE_CONFIG
+        
+        */
+
+        // ============================================================
+        // CONFIGURACIÓN DEL TEMPLATE - PERSONALIZAR AQUÍ
+        // ============================================================
+        
+        const DISEASE_CONFIG = {
+            // Información básica
+            name: "Diabetes Tipo 2",
+            title: "Centro de Información y Promoción - Diabetes Tipo 2", 
+            description: "Recursos especializados para el manejo integral de pacientes con Diabetes Tipo 2",
+            
+            // Categorías de contenido
+            categories: {
+                "videos-educativos": {
+                    name: "Videos Educativos",
+                    items: [
+                        {
+                            title: "Video: Fundamentos del Flow de Diabetes Tipo 2",
+                            description: "Video introductorio al manejo y flujo de decisiones en pacientes con Diabetes Tipo 2.",
+                            type: "video",
+                            slug: "diabetes-type-2-flow-fundamentals-video",
+                            url: "https://drive.google.com/file/d/1NiM7P9SXqbEvsU4rdHJFWIm0uxSXWENf/view?usp=drive_link",
+                            previewUrl: "https://drive.google.com/file/d/1NiM7P9SXqbEvsU4rdHJFWIm0uxSXWENf/preview"
+                        },
+                        {
+                            title: "Video: Casos Clínicos en Diabetes Tipo 2",
+                            description: "Análisis de casos clínicos y aplicación del algoritmo terapéutico.",
+                            type: "video",
+                            slug: "diabetes-type-2-clinical-cases-video",
+                            url: "https://drive.google.com/file/d/18BItqhBnEV7Y0kiXE4ZJiairN3fXjWfG/view?usp=drive_link",
+                            previewUrl: "https://drive.google.com/file/d/18BItqhBnEV7Y0kiXE4ZJiairN3fXjWfG/preview"
+                        }
+                    ]
+                },
+                "material-promocional": {
+                    name: "Material para Pacientes",
+                    items: [
+                        {
+                            title: "Material para Pacientes con Diabetes",
+                            description: "Recurso visual con recomendaciones esenciales para pacientes con Diabetes Tipo 2.",
+                            type: "material",
+                            slug: "patient-brochure-diabetes",
+                            url: "https://drive.google.com/file/d/1TnVJgWcZ3VtkuYR3tilVTlqJOeOyNYKE/view?usp=drive_link",
+                            previewUrl: "https://drive.google.com/file/d/1TnVJgWcZ3VtkuYR3tilVTlqJOeOyNYKE/preview"
+                        }
+                    ]
+                },
+                "guias-clinicas": {
+                    name: "Guías Clínicas",
+                    items: [
+                        {
+                            title: "Guía de Dosificación Insulina",
+                            description: "Guía práctica para la correcta dosificación y administración de insulina.",
+                            type: "guide",
+                            slug: "insulin-dosing-guide",
+                            url: "https://drive.google.com/file/d/16Y6YHdhsglRpUSfbPqaaSVU60FrYKiHK/view?usp=drive_link",
+                            previewUrl: "https://drive.google.com/file/d/16Y6YHdhsglRpUSfbPqaaSVU60FrYKiHK/preview"
+                        }
+                    ]
+                },
+                "infografias": {
+                    name: "Infografías",
+                    items: [
+                        {
+                            title: "Infografía de Puntos Clave en DM2",
+                            description: "Documento detallado sobre las opciones farmacológicas disponibles y su uso.",
+                            type: "infographic",
+                            slug: "key-points-infographic-dm2",
+                            url: "https://drive.google.com/file/d/1LWfmeRGPHZAlvPtN4TuBKH2jOaKZH2ec/view?usp=drive_link",
+                            previewUrl: "https://drive.google.com/file/d/1LWfmeRGPHZAlvPtN4TuBKH2jOaKZH2ec/preview"
+                        }
+                    ]
+                }
+            }
+        };
+
+        // ============================================================
+        // SISTEMA DE ROUTING - URLS INDIVIDUALES PARA CONTENIDO
+        // ============================================================
+
+        let currentCategory = null;
+
+        function getCurrentSlug() {
+            return window.location.pathname.replace('/', '') || null;
+        }
+
+        function updateURL(slug) {
+            const newURL = slug ? `/${slug}` : '/';
+            window.history.pushState({slug: slug}, '', newURL);
+        }
+
+        function findContentBySlug(slug) {
+            for (const [categoryKey, category] of Object.entries(DISEASE_CONFIG.categories)) {
+                const item = category.items.find(item => item.slug === slug);
+                if (item) {
+                    return {
+                        item: item,
+                        category: categoryKey,
+                        categoryName: category.name
+                    };
+                }
+            }
+            return null;
+        }
+
+        function togglePromotionalBanner(show) {
+            const banner = document.getElementById('promotionalBanner');
+            if (show) {
+                banner.classList.remove('hidden');
+            } else {
+                banner.classList.add('hidden');
+            }
+        }
+
+        function showIndividualContent(slug) {
+            const contentData = findContentBySlug(slug);
+            if (!contentData) {
+                showAllContent();
+                return;
+            }
+
+            togglePromotionalBanner(false);
+
+            const { item, category, categoryName } = contentData;
+            
+            document.querySelectorAll('.tab-button').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            const contentGrid = document.getElementById('contentGrid');
+            const emptyState = document.getElementById('emptyState');
+            
+            contentGrid.innerHTML = '';
+            emptyState.classList.remove('active');
+
+            const card = document.createElement('div');
+            card.className = 'content-card active individual-content';
+            card.style.maxWidth = '100%';
+            card.style.margin = '0';
+            card.innerHTML = `
+                <div style="padding: 20px 24px; background: white; border-bottom: 1px solid #e2e8f0;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <div class="breadcrumb">
+                            <a href="/" onclick="navigateToHome(event)">← Volver al inicio</a>
+                        </div>
+                        <div class="content-type type-${item.type}">${item.type}</div>
+                    </div>
+                    <h1 style="font-size: 1.5rem; font-weight: 600; color: #1e293b; margin: 0;">${item.title}</h1>
+                </div>
+                
+                <div style="padding: 0; background: #f8fafc;">
+                    <div class="preview-container" style="height: 80vh; min-height: 600px; margin: 0; border: none; border-radius: 0;">
+                        <iframe class="preview-iframe" src="${item.previewUrl}" 
+                                onload="this.style.opacity=1" 
+                                style="opacity:0; transition: opacity 0.3s ease; border-radius: 0;">
+                        </iframe>
+                    </div>
+                    <div style="padding: 20px; text-align: center; background: white;">
+                        <a href="${item.url}" target="_blank" class="btn btn-primary" style="min-width: 200px;">
+                            🔗 Abrir en Nueva Ventana
+                        </a>
+                    </div>
+                </div>
+            `;
+            contentGrid.appendChild(card);
+        }
+
+        function navigateToHome(event) {
+            event.preventDefault();
+            updateURL('');
+            showAllContent();
+        }
+
+        function navigateToContent(slug) {
+            updateURL(slug);
+            showIndividualContent(slug);
+        }
+
+        function initializeApp() {
+            setupDiseaseInfo();
+            generateTabs();
+            
+            const currentSlug = getCurrentSlug();
+            
+            if (currentSlug) {
+                showIndividualContent(currentSlug);
+            } else {
+                const totalItems = Object.values(DISEASE_CONFIG.categories)
+                    .reduce((total, category) => total + category.items.length, 0);
+                
+                if (totalItems > 0) {
+                    showAllContent();
+                } else {
+                    showEmptyState();
+                }
+            }
+        }
+
+        function setupDiseaseInfo() {
+            document.getElementById('diseaseName').textContent = DISEASE_CONFIG.name;
+            document.getElementById('pageTitle').textContent = DISEASE_CONFIG.title;
+            document.getElementById('pageDescription').textContent = DISEASE_CONFIG.description;
+            document.title = `MedFlow - ${DISEASE_CONFIG.name}`;
+        }
+
+        function generateTabs() {
+            const tabsContainer = document.getElementById('selectorTabs');
+            tabsContainer.innerHTML = '';
+
+            const totalItems = Object.values(DISEASE_CONFIG.categories)
+                .reduce((total, category) => total + category.items.length, 0);
+
+            const allTab = document.createElement('button');
+            allTab.className = 'tab-button';
+            allTab.setAttribute('data-category', 'all');
+            allTab.innerHTML = `
+                Todos
+                <span class="content-count">${totalItems}</span>
+            `;
+            allTab.addEventListener('click', () => showAllContent());
+            tabsContainer.appendChild(allTab);
+
+            Object.keys(DISEASE_CONFIG.categories).forEach(categoryKey => {
+                const category = DISEASE_CONFIG.categories[categoryKey];
+                const tab = document.createElement('button');
+                tab.className = 'tab-button';
+                tab.setAttribute('data-category', categoryKey);
+                tab.innerHTML = `
+                    ${category.name}
+                    <span class="content-count">${category.items.length}</span>
+                `;
+                tab.addEventListener('click', () => showCategory(categoryKey));
+                tabsContainer.appendChild(tab);
+            });
+        }
+
+        function showAllContent() {
+            currentCategory = 'all';
+            updateURL('');
+            
+            togglePromotionalBanner(true);
+            
+            document.querySelectorAll('.tab-button').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.getAttribute('data-category') === 'all') {
+                    tab.classList.add('active');
+                }
+            });
+
+            const contentGrid = document.getElementById('contentGrid');
+            const emptyState = document.getElementById('emptyState');
+            
+            contentGrid.innerHTML = '';
+            emptyState.classList.remove('active');
+            
+            const allItems = [];
+            Object.keys(DISEASE_CONFIG.categories).forEach(categoryKey => {
+                const category = DISEASE_CONFIG.categories[categoryKey];
+                category.items.forEach(item => {
+                    allItems.push({...item, categoryName: category.name});
+                });
+            });
+
+            if (allItems.length === 0) {
+                emptyState.classList.add('active');
+                return;
+            }
+
+            allItems.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'content-card active';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="content-type type-${item.type}">${item.type}</div>
+                        <h3 class="card-title">${item.title}</h3>
+                        <p class="card-description">${item.description}</p>
+                        <div style="margin-top: 8px; color: #64748b; font-size: 12px; font-weight: 500;">
+                            Categoría: ${item.categoryName}
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" onclick="navigateToContent('${item.slug}')">
+                                Ver Detalles
+                            </button>
+                            <a href="${item.url}" target="_blank" class="btn btn-secondary">
+                                Abrir Recurso
+                            </a>
+                        </div>
+                    </div>
+                `;
+                contentGrid.appendChild(card);
+            });
+        }
+
+        function showCategory(categoryKey) {
+            currentCategory = categoryKey;
+            const category = DISEASE_CONFIG.categories[categoryKey];
+            
+            togglePromotionalBanner(true);
+            
+            document.querySelectorAll('.tab-button').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.getAttribute('data-category') === categoryKey) {
+                    tab.classList.add('active');
+                }
+            });
+
+            const contentGrid = document.getElementById('contentGrid');
+            const emptyState = document.getElementById('emptyState');
+            
+            contentGrid.innerHTML = '';
+            emptyState.classList.remove('active');
+            
+            if (category.items.length === 0) {
+                emptyState.classList.add('active');
+                return;
+            }
+
+            category.items.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'content-card active';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="content-type type-${item.type}">${item.type}</div>
+                        <h3 class="card-title">${item.title}</h3>
+                        <p class="card-description">${item.description}</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" onclick="navigateToContent('${item.slug}')">
+                                Ver Detalles
+                            </button>
+                            <a href="${item.url}" target="_blank" class="btn btn-secondary">
+                                Abrir Recurso
+                            </a>
+                        </div>
+                    </div>
+                `;
+                contentGrid.appendChild(card);
+            });
+        }
+
+        function showEmptyState() {
+            document.getElementById('emptyState').classList.add('active');
+        }
+
+        window.addEventListener('popstate', function(event) {
+            const slug = getCurrentSlug();
+            if (slug) {
+                showIndividualContent(slug);
+            } else {
+                showAllContent();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        // ============================================================
+        // CHECKLIST PARA IMPLEMENTACIÓN:
+        // ============================================================
+        /*
+        
+        PASOS PARA CREAR UN SITIO ESPECÍFICO:
+        
+        ☐ 0. Crear carpeta "images/" y agregar:
+             - logo-medflow.png (logo oficial de MedFlow)
+             - your-logo-goes-here.gif (logo animado del cliente)
+             - promotional-banner.gif (banner promocional para homepage)
+        ☐ 1. Copiar este archivo HTML completo
+        ☐ 2. Cambiar DISEASE_CONFIG.name por el nombre de la enfermedad
+        ☐ 3. Cambiar DISEASE_CONFIG.title por el título del banner  
+        ☐ 4. Cambiar DISEASE_CONFIG.description por la descripción
+        ☐ 5. Agregar contenido real a las categorías que se vayan a usar
+        ☐ 6. Eliminar categorías que no se necesiten (opcional)
+        ☐ 7. Testear que todos los links de Google Drive funcionen
+        ☐ 8. Verificar que las vistas previas se muestren correctamente
+        ☐ 9. Verificar que los logos se vean correctamente
+        ☐ 10. Verificar que el banner promocional se muestre en homepage
+        ☐ 11. Revisar el diseño en móvil y desktop
+        ☐ 12. Probar la nueva funcionalidad ultra-simplificada de vista de contenido
+        ☐ 13. Verificar que el preview ocupe el 80% de la pantalla correctamente
+        ☐ 14. Confirmar que no hay elementos redundantes o duplicados
+        
+        MEJORAS EN ESTA VERSIÓN:
+        ✅ Vista ultra-simplificada del contenido sin elementos redundantes
+        ✅ Preview en pantalla completa (80% altura) con acceso inmediato
+        ✅ Header minimalista con solo lo esencial: título y navegación
+        ✅ Eliminadas descripciones duplicadas y pestañas innecesarias
+        ✅ Breadcrumbs simplificados a solo "Volver al inicio"
+        ✅ Botón prominente de "Abrir en Nueva Ventana"
+        ✅ Diseño centrado 100% en el contenido principal
+        ✅ URLs individuales compartibles mantenidas
+        
+        */
+    </script>
+</body>
+</html>
