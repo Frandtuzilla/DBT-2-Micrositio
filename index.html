@@ -99,16 +99,17 @@
             padding: 12px;
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            transition: all 0.3s ease;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
+            width: 48px;
+            height: 48px;
         }
 
         .hamburger-button:hover {
             background: #f9fafb;
             border-color: #2563eb;
-            transform: translateX(-50%) scale(1.05);
         }
 
         .hamburger-button.active {
@@ -117,21 +118,35 @@
         }
 
         .hamburger-icon {
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 16px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             cursor: pointer;
+            position: relative;
         }
 
         .hamburger-icon span {
             display: block;
-            height: 3px;
+            height: 2px;
             width: 100%;
             background: #374151;
-            border-radius: 2px;
-            transition: all 0.3s ease;
+            border-radius: 1px;
+            transition: all 0.2s ease;
+            position: absolute;
+        }
+
+        .hamburger-icon span:nth-child(1) {
+            top: 0;
+        }
+
+        .hamburger-icon span:nth-child(2) {
+            top: 7px;
+        }
+
+        .hamburger-icon span:nth-child(3) {
+            top: 14px;
         }
 
         .hamburger-button.active .hamburger-icon span {
@@ -139,7 +154,8 @@
         }
 
         .hamburger-button.active .hamburger-icon span:nth-child(1) {
-            transform: translateY(7px) rotate(45deg);
+            top: 7px;
+            transform: rotate(45deg);
         }
 
         .hamburger-button.active .hamburger-icon span:nth-child(2) {
@@ -147,7 +163,8 @@
         }
 
         .hamburger-button.active .hamburger-icon span:nth-child(3) {
-            transform: translateY(-7px) rotate(-45deg);
+            top: 7px;
+            transform: rotate(-45deg);
         }
 
         /* Menú desplegable */
@@ -827,10 +844,6 @@
                 width: 98%;
                 height: 98%;
             }
-
-            .banner {
-                margin-top: 80px;
-            }
         }
 
         /* Móviles pequeños */
@@ -850,10 +863,6 @@
             .mobile-menu-content {
                 padding: 1.5rem;
                 width: 280px;
-            }
-
-            .banner {
-                margin-top: 70px;
             }
         }
 
